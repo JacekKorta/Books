@@ -6,5 +6,5 @@ from books import api_views
 app_name = 'books'
 
 urlpatterns = [
-    path('books/', api_views.BooksView.as_view(), name='books'),
+    path('books/', api_views.BooksListView.as_view(), name='books-list'),
     ]
