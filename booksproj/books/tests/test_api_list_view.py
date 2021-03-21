@@ -128,9 +128,9 @@ class TestApiGetListFiltered(BasicSetup):
         response = self.client.get('/books/?published_date=1924')
         self.assertEqual(len(response.data), 1)
 
-    def test_get_year_empty_filter_returns_empty_list(self):
+    def test_get_year_empty_filter_returns_full_list(self):
         response = self.client.get('/books/?published_date=')
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 2)
 
     def test_get_year_incorrect_filter_returns_empty_list(self):
         response = self.client.get('/books/?published_date="King Arthur')
