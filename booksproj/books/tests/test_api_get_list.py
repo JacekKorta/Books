@@ -1,9 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from faker import Faker
-from rest_framework.test import APIRequestFactory
 
-from books import api_views
 from books.models import Author, Book, Category
 
 
