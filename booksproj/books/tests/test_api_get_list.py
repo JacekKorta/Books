@@ -27,7 +27,7 @@ class BasicSetup(TestCase):
         book_1.categories.add(category_1, category_2)
         book_1.authors.add(author_1, author_2)
 
-        book_1 = Book.objects.create(
+        book_2 = Book.objects.create(
             title='The completely different book about IT',
             published_date="2004",
             average_rating=3.5,
@@ -35,8 +35,8 @@ class BasicSetup(TestCase):
             thumbnail='https://google.com',
             google_api_id='XCVxdrERTWSA'
         )
-        book_1.categories.add(category_1)
-        book_1.authors.add(author_3)
+        book_2.categories.add(category_1)
+        book_2.authors.add(author_3)
 
 
 class TestApiGetListData(BasicSetup):
@@ -126,10 +126,47 @@ class TestApiGetListData(BasicSetup):
 
 class TestApiGetListFiltered(BasicSetup):
 
-    def test_get_filtered_returns_one_book(self):
+    def test_get_year_filter_returns_book_published_in_given_year(self):
         response = self.client.get('/books/?published_date=1924')
         self.assertEqual(len(response.data), 1)
 
-    def test_get_empty_filter_returns_empty_list(self):
+    def test_get_year_empty_filter_returns_empty_list(self):
         response = self.client.get('/books/?published_date=')
         self.assertEqual(len(response.data), 0)
+
+    def test_get_year_incorrect_filter_returns_empty_list(self):
+        response = self.client.get('/books/?published_date="King Arthur')
+        self.assertEqual(len(response.data), 0)
+
+    def test_get_author_filter_returns_book_given_author(self):
+        author = Author.objects.get(pk=1)
+        response = self.client.get(f'/books/?author={author.name}')
+        self.assertEqual(len(response.data), 1)
+
+    def test_get_authors_filter_returns_books_given_authors(self):
+        author1 = Author.objects.get(pk=1)
+        author3 = Author.objects.get(pk=3)
+        response = self.client.get(f'/books/?author={author1.name}&author={author3.name}')
+        self.assertEqual(len(response.data), 2)
+
+    def test_get_author_empty_filter_returns_empty_list(self):
+        response = self.client.get('/books/?author=')
+        self.assertEqual(len(response.data), 0)
+
+    def test_get_date_sort_minus_returns_newest_first(self):
+        newest_book = Book.objects.all().order_by('-published_date')[0]
+        response = self.client.get('/books/?sort=-published_date')
+        response_book_published_date = (response.data[0].get('published_date', None))
+        self.assertEqual(response_book_published_date, newest_book.published_date)
+
+    def test_get_date_sort_returns_oldest_first(self):
+        oldest_book = Book.objects.all().order_by('published_date')[0]
+        response = self.client.get('/books/?sort=-published_date')
+        response_book_published_date = (response.data[0].get('published_date', None))
+        self.assertNotEqual(response_book_published_date, oldest_book.published_date)
+
+    def test_get_date_sort_empty_returns_oldest_first(self):
+        oldest_book = Book.objects.all().order_by('published_date')[0]
+        response = self.client.get('/books/?sort=')
+        response_book_published_date = (response.data[0].get('published_date', None))
+        self.assertEqual(response_book_published_date, oldest_book.published_date)
