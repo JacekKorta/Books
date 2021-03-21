@@ -1,11 +1,12 @@
 from django.core.exceptions import FieldError
+from django.http import Http404
 from rest_framework.views import APIView, Response
 
 from .models import Author, Book
 from .serializers import BookSerializer
 
 
-class BooksListView(APIView):
+class BooksList(APIView):
 
     def get_queryset(self):
         queryset = Book.objects.prefetch_related('authors').all()
@@ -31,4 +32,18 @@ class BooksListView(APIView):
 
     def get(self, request, format=None):
         serializer = BookSerializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+
+class BookDetail(APIView):
+
+    def get_object(self, pk):
+        try:
+            return Book.objects.get(pk=pk)
+        except Book.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        book = self.get_object(pk)
+        serializer = BookSerializer(book)
         return Response(serializer.data)
