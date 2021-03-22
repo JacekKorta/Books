@@ -10,10 +10,6 @@ from .google_api_mock import MockResponse
 class TestApiGetListData(TestCase):
     gapi_auxiliary = GoogleBooksApiHandler()
 
-    # def test_post_method_works(self):
-    #     response = self.client.post("/db/", {"q": "war"})
-    #     self.assertEqual(response.status_code, 200)
-
     @patch("requests.post", return_value=MockResponse())
     def test_post_method_without_body_returns_400(self, mocked):
         response = self.client.post("/db/")

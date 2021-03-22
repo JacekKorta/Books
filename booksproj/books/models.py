@@ -27,5 +27,3 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} wrote by {[author for author in self.authors.all()]}"
-
-

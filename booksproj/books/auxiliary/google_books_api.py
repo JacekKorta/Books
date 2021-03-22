@@ -91,7 +91,3 @@ class GoogleBooksApiHandler:
                 self.add_books(json_data)
             else:
                 next_page = False
-
-
-
-

@@ -39,7 +39,7 @@ class TestBasicBookTest(BasicSetupTestCase):
         self.assertEqual(
             book.__str__(),
             f"{book.title} wrote by {[author for author in book.authors.all()]}"
-            )
+        )
 
 
 class TestBasicCategoryTest(BasicSetupTestCase):
@@ -47,5 +47,3 @@ class TestBasicCategoryTest(BasicSetupTestCase):
     def test_category_represented_by_name_field(self):
         category = Category.objects.get(pk=1)
         self.assertEqual(category.__str__(), category.name)
-
-
