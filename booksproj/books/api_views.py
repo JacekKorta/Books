@@ -12,19 +12,9 @@ from .models import Author, Book
 from .serializers import BookSerializer
 
 
-class BookDetail(APIView):
-
-    def get(self, request, pk, format=None):
-        book = self.get_object(pk)
-        serializer = BookSerializer(book)
-        return Response(serializer.data, status=200)
-
-    @staticmethod
-    def get_object(pk):
-        try:
-            return Book.objects.get(pk=pk)
-        except Book.DoesNotExist:
-            raise Http404
+class BookDetail(generics.RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
 
 class BooksList(generics.ListAPIView):
